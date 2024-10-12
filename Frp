@@ -1,0 +1,44 @@
+Param (
+    [string]$fortifyServer,     # SQL Server name
+    [string]$fortifyDatabase,   # Database name
+    [string]$sqlFile,           # SQL script file to execute
+    [string]$outputDir,         # Directory to save the downloaded FRP file
+    [string]$userName,          # SQL Server username
+    [string]$password           # SQL Server password
+)
+
+# Ensure the output directory exists
+if (!(Test-Path -Path $outputDir)) {
+    New-Item -ItemType Directory -Path $outputDir -Force
+}
+
+# Define the output report file path
+$reportFile = Join-Path -Path $outputDir -ChildPath "latest_frp.fpr"
+
+# Log function
+function Write-Log {
+    param ([string]$message)
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Write-Output "$timestamp : $message"
+}
+
+try {
+    Write-Log "Starting to fetch the latest FRP file."
+
+    # Execute the SQL command to get the latest FRP file path
+    sqlcmd -S $fortifyServer -d $fortifyDatabase -i $sqlFile -o $reportFile -W -s "," -U $userName -P $password
+
+    # Confirm that the report file was created
+    if (Test-Path $reportFile) {
+        Write-Log "FRP file downloaded successfully: $reportFile"
+    } else {
+        Write-Log "Failed to download FRP file."
+        Exit 1
+    }
+
+} catch {
+    Write-Log "An error occurred: $_"
+    Exit 1
+}
+
+Write-Log "Script completed successfully."
