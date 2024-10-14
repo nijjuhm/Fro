@@ -1,0 +1,65 @@
+Param (
+    [string]$fortifyServer,       # SQL Server name
+    [string]$fortifyDatabase,     # Database name
+    [string]$outputDir,           # Directory to save the downloaded FPR file
+    [string]$applicationName,     # Name of the application to fetch the latest FPR file for
+    [string]$userName,            # SQL Server username
+    [string]$password             # SQL Server password
+)
+
+# Ensure the output directory exists
+if (!(Test-Path -Path $outputDir)) {
+    New-Item -ItemType Directory -Path $outputDir -Force
+}
+
+# Define the output file path
+$outputFilePath = Join-Path -Path $outputDir -ChildPath "$applicationName`_latest.fpr"
+
+# Load SQL Client assembly
+Add-Type -AssemblyName "System.Data"
+
+# SQL query to retrieve the latest FPR file binary data
+$query = @"
+SELECT TOP 1 FileData
+FROM FPRFiles
+WHERE ApplicationName = @ApplicationName
+ORDER BY DateCreated DESC
+"@
+
+# Create SQL Connection
+$connectionString = "Server=$fortifyServer;Database=$fortifyDatabase;User Id=$userName;Password=$password;"
+$connection = New-Object System.Data.SqlClient.SqlConnection
+$connection.ConnectionString = $connectionString
+
+try {
+    # Open SQL connection
+    $connection.Open()
+
+    # Create SQL command
+    $command = $connection.CreateCommand()
+    $command.CommandText = $query
+
+    # Add parameter for application name
+    $parameter = $command.Parameters.Add("@ApplicationName", [System.Data.SqlDbType]::NVarChar)
+    $parameter.Value = $applicationName
+
+    # Execute the command and retrieve the binary data
+    $reader = $command.ExecuteReader()
+    if ($reader.Read()) {
+        $fileData = $reader["FileData"]
+
+        # Save the binary data to a file
+        [System.IO.File]::WriteAllBytes($outputFilePath, $fileData)
+        Write-Output "FPR file for application '$applicationName' downloaded successfully: $outputFilePath"
+    } else {
+        Write-Output "No FPR file found for application '$applicationName'."
+    }
+
+    # Close reader
+    $reader.Close()
+} catch {
+    Write-Output "An error occurred: $_"
+} finally {
+    # Close SQL connection
+    $connection.Close()
+}
