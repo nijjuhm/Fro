@@ -1,0 +1,28 @@
+Internal Network Access Required: Likely restricts access to users within an internal network, possibly for security reasons.
+	2.	External Public Network Access: Allows access over a public network, potentially for general internet availability.
+	3.	Secured Connection with Business: Suggests a secure connection is required, likely through a business VPN or another secure method.
+	4.	Console Access: Could be for direct access via a console interface, perhaps for administrative tasks or configuration.
+
+------
+Internally Developed:
+This means the application was developed entirely in-house by the organization's own development team, without external involvement.
+Partially Outsourced:
+Some parts of the application were developed by an external vendor or third-party, while the remaining parts were built internally.
+Fully Outsourced:
+The entire application development process was handled by an external vendor or third-party, with no internal development involvement.
+Customized:
+A pre-existing application has been modified or customized to meet specific needs or requirements unique to the organization.
+Commercial Off the Shelf (COTS):
+The application is a standard, ready-made software solution purchased from a vendor and used as-is, without customization.
+Open Source:
+The application is based on open-source software, meaning it has been developed using publicly available code that can be freely used, modified, and distributed.
+
+-----
+New:
+This represents an application that has just begun development. It’s likely in the initial stages where the architecture, requirements, and core design are being established.
+Active Development:
+Indicates that the application is in an active build phase, with ongoing coding, testing, and feature additions. It is not yet completed or fully released.
+Maintenance:
+This stage refers to an application that has already been developed and deployed, but continues to receive bug fixes, updates, and minor improvements to ensure proper functioning and security.
+Retired:
+Represents an application that has reached the end of its lifecycle. It is no longer being actively maintained, developed, or supported, and may be phased out or replaced.
